@@ -115,8 +115,8 @@ The animations directory includes the following custom animations:
 
   *}*
   ```
-- **Screenshots**: Saved to \~/Pictures/Screenshots/Screenshot from
-  %Y-%m-%d %H-%M-%S.png via niri msg action screenshot or using grim.
+- **Screenshots**: Customize where niri saves screenshots, Current config saves to ~/Images/Pictures/screenshots/%Y-%m-%d %H-%M-%S.png  
+    via niri msg action screenshot or using grim.
 
 ## Usage
 
