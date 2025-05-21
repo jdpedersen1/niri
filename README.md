@@ -60,7 +60,7 @@ you use a different filename or location.
 
 1.  **Install Niri and Dependencies**:
     ```bash
-    sudo xbps-install -S niri waybar kitty grim fuzzel*
+    sudo xbps-install -S niri waybar kitty fuzzel*
     ```
     Niri is available in Void Linux's repositories. If not found, you
     may need to build Niri from source; see the Niri GitHub for
@@ -105,7 +105,7 @@ The animations directory includes the following custom animations:
 - vortex
 
 ### Other Settings
-- **Environment**:
+- **Environment**: Set environment variables
   ```kdl
   *environment {*
 
