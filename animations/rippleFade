@@ -1,0 +1,35 @@
+window-open {
+    duration-ms 300
+    curve "ease-out-cubic"
+    custom-shader r"
+        vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+            vec4 color = vec4(0.0);
+            if (0.0 <= coords_geo.x && coords_geo.x <= 1.0 && 0.0 <= coords_geo.y && coords_geo.y <= 1.0) {
+                vec2 centered = coords_geo.xy - vec2(0.5);
+                float dist = length(centered); // Distance from center
+                float ripple = niri_clamped_progress * 0.7 - dist; // Ripple radius
+                float opacity = clamp(ripple * 2.0, 0.0, 1.0);
+                color = texture2D(niri_tex, coords_geo.st) * opacity;
+            }
+            return color;
+        }
+    "
+}
+
+window-close {
+    duration-ms 300
+    curve "ease-out-cubic"
+    custom-shader r"
+        vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+            vec4 color = vec4(0.0);
+            if (0.0 <= coords_geo.x && coords_geo.x <= 1.0 && 0.0 <= coords_geo.y && coords_geo.y <= 1.0) {
+                vec2 centered = coords_geo.xy - vec2(0.5);
+                float dist = length(centered);
+                float ripple = (1.0 - niri_clamped_progress) * 0.7 - dist;
+                float opacity = clamp(ripple * 2.0, 0.0, 1.0);
+                color = texture2D(niri_tex, coords_geo.st) * opacity;
+            }
+            return color;
+        }
+    "
+}

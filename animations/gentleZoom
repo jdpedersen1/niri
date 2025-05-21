@@ -1,0 +1,39 @@
+window-open {
+    duration-ms 300
+    curve "ease-out-cubic"
+    custom-shader r"
+        vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+            vec4 color = vec4(0.0);
+            if (0.0 <= coords_geo.x && coords_geo.x <= 1.0 && 0.0 <= coords_geo.y && coords_geo.y <= 1.0) {
+                vec2 centered = coords_geo.xy - vec2(0.5);
+                float scale = 0.8 + 0.2 * niri_clamped_progress; // Scale from 80% to 100%
+                vec2 scaled = centered / scale + vec2(0.5);
+                if (0.0 <= scaled.x && scaled.x <= 1.0 && 0.0 <= scaled.y && scaled.y <= 1.0) {
+                    color = texture2D(niri_tex, scaled) * niri_clamped_progress;
+                }
+            }
+            return color;
+        }
+    "
+}
+
+
+    window-close {
+        duration-ms 300
+        curve "ease-out-cubic"
+        custom-shader r"
+            vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+                vec4 color = vec4(0.0);
+                if (0.0 <= coords_geo.x && coords_geo.x <= 1.0 && 0.0 <= coords_geo.y && coords_geo.y <= 1.0) {
+                    vec2 centered = coords_geo.xy - vec2(0.5);
+                    float scale = 1.0 - 0.2 * niri_clamped_progress; // Scale from 100% to 80%
+                    vec2 scaled = centered / scale + vec2(0.5);
+                    if (0.0 <= scaled.x && scaled.x <= 1.0 && 0.0 <= scaled.y && scaled.y <= 1.0) {
+                        color = texture2D(niri_tex, scaled) * (1.0 - niri_clamped_progress);
+                    }
+                }
+                return color;
+            }
+        "
+    }
+

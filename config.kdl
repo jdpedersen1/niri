@@ -1,0 +1,434 @@
+input {
+    keyboard {
+        xkb {
+        }
+    }
+
+    touchpad {
+        tap
+        dwt
+        scroll-method "two-finger"
+        disabled-on-external-mouse
+    }
+
+    mouse {
+    }
+
+    // warp-mouse-to-focus
+    // focus-follows-mouse max-scroll-amount="0%"
+}
+
+environment {
+    QT_QPA_PLATFORM "wayland"
+    QT_QPA_PLATFORM_THEME "qt5ct"
+}
+
+output "eDP-1" {
+    // off
+    mode "2560x1600@239.998"
+    scale 1
+    transform "normal"
+    position x=2560 y=0
+    focus-at-startup
+}
+
+output "HDMI-A-1" {
+    mode "1920x1080"
+    scale 1
+    transform "normal"
+    position x=1920 y=0
+    focus-at-startup
+}
+
+layout {
+    gaps 10
+    center-focused-column "never"
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.75
+        //fixed 2560
+    }
+
+    preset-window-heights { 
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.75
+        proportion 1.0
+        //fixed 1600
+    }
+
+    default-column-width { proportion 0.75; }
+
+    focus-ring {
+        off
+        width 25
+        active-color "rgba(0, 128, 128, 0)"
+        inactive-color "#505050"
+        // active-gradient from="#80c8ff" to="#bbddff" angle=45
+        // inactive-gradient from="#505050" to="#808080" angle=45 relative-to="workspace-view"
+    }
+
+    border {
+        // off
+        width 2
+        // active-color "rgba(0, 128, 128, 1)"
+        // inactive-color "#505050"
+        active-gradient from="rgba(0, 128, 128, 1)" to="rgba(0, 0, 0, 1)" angle=180 relative-to="workspace-view"
+        inactive-gradient from="#808080" to="#000000" angle=180 relative-to="workspace-view"
+    }
+
+    // You can enable drop shadows for windows.
+    shadow {
+        on
+        draw-behind-window true
+        softness 30
+        spread 5
+        offset x=0 y=5
+        color "#0007"
+    }
+
+    struts {
+        // left 64
+        // right 64
+        // top 64
+        // bottom 64
+    }
+}
+
+spawn-at-startup "pipewire"
+spawn-at-startup "wireplumber"
+spawn-at-startup "pipewire-pulse"
+spawn-at-startup "nm-applet"
+spawn-at-startup "blueman-applet"
+spawn-at-startup "xdg-desktop-portal-gnome"
+spawn-at-startup "xdg-desktop-portal-gtk"
+spawn-at-startup "waybar" "-c" "/home/jake/.config/waybar/configs/config1" "-s" "/home/jake/.config/waybar/themes/theme1.css"
+spawn-at-startup "swww" "init"
+
+prefer-no-csd
+
+screenshot-path "~/Images/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+animations {
+    slowdown 2.0
+window-close {
+   duration-ms 150
+   curve "linear"
+   custom-shader r"
+
+ vec4 fall_and_rotate(vec3 coords_geo, vec3 size_geo) {
+ float progress = niri_clamped_progress * niri_clamped_progress;
+ vec2 coords = (coords_geo.xy - vec2(0.5, 1.0)) * size_geo.xy;
+ coords.y -= progress * 1440.0;
+ float random = (niri_random_seed - 0.5) / 2.0;
+ random = sign(random) - random;
+ float max_angle = 0.5 * random;
+ float angle = progress * max_angle;
+ mat2 rotate = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+ coords = rotate * coords;
+ coords_geo = vec3(coords / size_geo.xy + vec2(0.5, 1.0), 1.0);
+ vec3 coords_tex = niri_geo_to_tex * coords_geo;
+ vec4 color = texture2D(niri_tex, coords_tex.st);
+
+ return color;
+}
+
+vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+return fall_and_rotate(coords_geo, size_geo);
+ }
+"
+}
+
+window-open {
+    duration-ms 150
+    curve "linear"
+    custom-shader r"
+        vec4 drop_and_rotate(vec3 coords_geo, vec3 size_geo) {
+            float progress = niri_clamped_progress * niri_clamped_progress;
+            vec2 coords = (coords_geo.xy - vec2(0.5, 1.0)) * size_geo.xy;
+            coords.y += (1.0 - progress) * 1440.0; // Start above screen, move down
+            float random = (niri_random_seed - 0.5) / 2.0;
+            random = sign(random) - random;
+            float max_angle = 0.5 * random;
+            float angle = (1.0 - progress) * max_angle; // Reverse rotation
+            mat2 rotate = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));
+            coords = rotate * coords;
+            coords_geo = vec3(coords / size_geo.xy + vec2(0.5, 1.0), 1.0);
+            vec3 coords_tex = niri_geo_to_tex * coords_geo;
+            vec4 color = texture2D(niri_tex, coords_tex.st);
+            return color;
+        }
+
+        vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+            return drop_and_rotate(coords_geo, size_geo);
+        }
+    "
+}
+}
+
+
+window-rule {
+    match app-id=r#"brave-browser"#
+    open-maximized true
+}
+
+window-rule {
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    default-column-width {}
+}
+
+window-rule {
+    match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+    open-floating true
+}
+
+/-window-rule {
+    match app-id=r#"^org\.keepassxc\.KeePassXC$"#
+    match app-id=r#"^org\.gnome\.World\.Secrets$"#
+    block-out-from "screen-capture"
+    // block-out-from "screencast"
+}
+
+window-rule {
+    geometry-corner-radius 10
+    clip-to-geometry true
+}
+
+// workspace "1" {
+//     open-on-output "eDP-1"
+// }
+// workspace "2" {
+//     open-on-output "eDP-1"
+// }
+// workspace "3" {
+//     open-on-output "eDP-1"
+// }
+// workspace "4" {
+//     open-on-output "eDP-1"
+// }
+// workspace "5" {
+//     open-on-output "eDP-1"
+// }
+// workspace "6" {
+//     open-on-output "eDP-1"
+// }
+// workspace "7" {
+//     open-on-output "eDP-1"
+// }
+// workspace "8" {
+//     open-on-output "eDP-1"
+// }
+// workspace "9" {
+//     open-on-output "eDP-1"
+// }
+// workspace "10" {
+//     open-on-output "eDP-1"
+// }
+
+binds {
+    // Hotkey Display
+    Mod+Shift+Slash { show-hotkey-overlay; }
+
+    // Terminals
+    Mod+Control+Return { spawn "alacritty"; }
+    Mod+Shift+Return { spawn "kitty"; }
+
+    // Launchers
+    Mod+Shift+D { spawn "fuzzel"; }
+
+    // Browsers
+    Mod+Shift+B { spawn "brave-browser-stable" "--ozone-platform=wayland" "--enable-features=UseOzonePlatform"; }
+
+    // Piped or Multiple Commands
+    //Mod+T { spawn "bash" "-c" "notify-send hello && exec alacritty"; }
+
+    // Multimedia Keys
+    // AUDIO //
+    XF86AudioRaiseVolume     allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+"; }
+    XF86AudioLowerVolume     allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-"; }
+    XF86AudioMute            allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    Mod+XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+    Mod+XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SOURCE@" "0.1+"; }
+    Mod+XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SOURCE@" "0.1-"; }
+    // BRIGHTNESS //
+    XF86MonBrightnessUp      { spawn "brightnessctl" "set" "10%+"; }
+    XF86MonBrightnessDown    { spawn "brightnessctl" "set" "10%-"; }
+
+    // Kill Window
+    Mod+Shift+Q { close-window; }
+
+    // Focus Window/Column
+    Mod+Left  { focus-column-left; }
+    Mod+Down  { focus-window-down; }
+    Mod+Up    { focus-window-up; }
+    Mod+Right { focus-column-right; }
+
+    // Move Window/Column
+    Mod+Ctrl+Left  { move-column-left; }
+    Mod+Ctrl+Down  { move-window-down; }
+    Mod+Ctrl+Up    { move-window-up; }
+    Mod+Ctrl+Right { move-column-right; }
+
+    // Focus Window/Workspace
+    Mod+J     { focus-window-or-workspace-down; }
+    Mod+K     { focus-window-or-workspace-up; }
+    Mod+Ctrl+J     { move-window-down-or-to-workspace-down; }
+    Mod+Ctrl+K     { move-window-up-or-to-workspace-up; }
+
+    // Focus/Move from beginning to end of workspace
+    Mod+Home { focus-column-first; }
+    Mod+End  { focus-column-last; }
+    Mod+Ctrl+Home { move-column-to-first; }
+    Mod+Ctrl+End  { move-column-to-last; }
+
+    // Monitor focus
+    Mod+Shift+Left  { focus-monitor-left; }
+    Mod+Shift+Down  { focus-monitor-down; }
+    Mod+Shift+Up    { focus-monitor-up; }
+    Mod+Shift+Right { focus-monitor-right; }
+
+    // Move Column to Monitor
+    Mod+Shift+Ctrl+Left  { move-column-to-monitor-left; }
+    Mod+Shift+Ctrl+Down  { move-column-to-monitor-down; }
+    Mod+Shift+Ctrl+Up    { move-column-to-monitor-up; }
+    Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
+
+    // Modernatively, there are commands to move just a single window:
+    // Mod+Shift+Ctrl+Left  { move-window-to-monitor-left; }
+    // ...
+
+    // And you can also move a whole workspace to another monitor:
+    // Mod+Shift+Ctrl+Left  { move-workspace-to-monitor-left; }
+    // ...
+
+    Mod+Page_Down      { focus-workspace-down; }
+    Mod+Page_Up        { focus-workspace-up; }
+    Mod+U              { focus-workspace-down; }
+    Mod+I              { focus-workspace-up; }
+    Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
+    Mod+Ctrl+Page_Up   { move-column-to-workspace-up; }
+    Mod+Ctrl+U         { move-column-to-workspace-down; }
+    Mod+Ctrl+I         { move-column-to-workspace-up; }
+
+    // Modernatively, there are commands to move just a single window:
+    // Mod+Ctrl+Page_Down { move-window-to-workspace-down; }
+    // ...
+
+    Mod+Shift+Page_Down { move-workspace-down; }
+    Mod+Shift+Page_Up   { move-workspace-up; }
+    Mod+Shift+U         { move-workspace-down; }
+    Mod+Shift+I         { move-workspace-up; }
+
+    // You can bind mouse wheel scroll ticks using the following syntax.
+    // These binds will change direction based on the natural-scroll setting.
+    //
+    // To avoid scrolling through workspaces really fast, you can use
+    // the cooldown-ms property. The bind will be rate-limited to this value.
+    // You can set a cooldown on any bind, but it's most useful for the wheel.
+    Mod+WheelScrollDown      cooldown-ms=150 { focus-workspace-down; }
+    Mod+WheelScrollUp        cooldown-ms=150 { focus-workspace-up; }
+    Mod+Ctrl+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
+    Mod+Ctrl+WheelScrollUp   cooldown-ms=150 { move-column-to-workspace-up; }
+
+    Mod+WheelScrollRight      { focus-column-right; }
+    Mod+WheelScrollLeft       { focus-column-left; }
+    Mod+Ctrl+WheelScrollRight { move-column-right; }
+    Mod+Ctrl+WheelScrollLeft  { move-column-left; }
+
+    // Usually scrolling up and down with Shift in applications results in
+    // horizontal scrolling; these binds replicate that.
+    Mod+Shift+WheelScrollDown      { focus-column-right; }
+    Mod+Shift+WheelScrollUp        { focus-column-left; }
+    Mod+Ctrl+Shift+WheelScrollDown { move-column-right; }
+    Mod+Ctrl+Shift+WheelScrollUp   { move-column-left; }
+
+    // Adjust Volume with Scrolling
+    Mod+TouchpadScrollUp { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.02+"; }
+    Mod+TouchpadScrollDown   { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.02-"; }
+
+    // You can refer to workspaces by index. However, keep in mind that
+    // niri is a dynamic workspace system, so these commands are kind of
+    // "best effort". Trying to refer to a workspace index bigger than
+    // the current workspace count will instead refer to the bottommost
+    // (empty) workspace.
+    //
+    // For example, with 2 workspaces + 1 empty, indices 3, 4, 5 and so on
+    // will all refer to the 3rd workspace.
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+    Mod+6 { focus-workspace 6; }
+    Mod+7 { focus-workspace 7; }
+    Mod+8 { focus-workspace 8; }
+    Mod+9 { focus-workspace 9; }
+    Mod+0 { focus-workspace 10; }
+    Mod+Ctrl+1 { move-column-to-workspace 1; }
+    Mod+Ctrl+2 { move-column-to-workspace 2; }
+    Mod+Ctrl+3 { move-column-to-workspace 3; }
+    Mod+Ctrl+4 { move-column-to-workspace 4; }
+    Mod+Ctrl+5 { move-column-to-workspace 5; }
+    Mod+Ctrl+6 { move-column-to-workspace 6; }
+    Mod+Ctrl+7 { move-column-to-workspace 7; }
+    Mod+Ctrl+8 { move-column-to-workspace 8; }
+    Mod+Ctrl+9 { move-column-to-workspace 9; }
+    Mod+Ctrl+0 { move-column-to-workspace 10; }
+    // Modernatively, there are commands to move just a single window:
+    // Mod+Ctrl+1 { move-window-to-workspace 1; }
+
+    // Switches focus between the current and the previous workspace.
+    Mod+Tab { focus-workspace-previous; }
+
+    // Move Focused Window to Left or Right Column
+    Mod+BracketLeft  { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+
+    // Consume/Expel Far Right Window(if unfocused) into Column 
+    Mod+Comma  { consume-window-into-column; }
+    Mod+Period { expel-window-from-column; }
+
+    // Window Resizing
+    Mod+R { switch-preset-column-width; }
+    Mod+Shift+R { switch-preset-window-height; }
+    Mod+Ctrl+R { reset-window-height; }
+    Mod+F { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+
+    // Fullscreen If No Other Windows Fully Visible
+    Mod+Ctrl+F { expand-column-to-available-width; }
+
+    // Center Focused Column
+    Mod+C { center-column; }
+
+    // Incremental Width Adjustment
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+
+    // Incremental Height Adjustment
+    Mod+Shift+Minus { set-window-height "-10%"; }
+    Mod+Shift+Equal { set-window-height "+10%"; }
+
+    // Toggle Floating
+    Mod+V       { toggle-window-floating; }
+    Mod+Shift+V { switch-focus-between-floating-and-tiling; }
+
+    // Tabbed Columns
+    Mod+W { toggle-column-tabbed-display; }
+
+    // Screenshots
+    Print { screenshot; }
+    Ctrl+Print { screenshot-screen; }
+    Mod+Print { screenshot-window; }
+
+    // Toggle Keyboard Shortcuts
+    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
+    // Quit
+    Mod+Shift+C { quit; }
+    Ctrl+Alt+Delete { quit; }
+
+    // Power Off Screen 
+    Mod+Shift+P { power-off-monitors; }
+}

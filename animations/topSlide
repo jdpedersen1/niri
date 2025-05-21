@@ -1,0 +1,37 @@
+window-open {
+    duration-ms 300
+    curve "ease-out-cubic"
+    custom-shader r"
+        vec4 open_color(vec3 coords_geo, vec3 size_geo) {
+            vec4 color = vec4(0.0);
+            if (0.0 <= coords_geo.x && coords_geo.x <= 1.0 && 0.0 <= coords_geo.y && coords_geo.y <= 1.0) {
+                float slide = niri_clamped_progress - coords_geo.y;
+                float opacity = clamp(slide, 0.0, 1.0);
+                vec2 shifted = vec2(coords_geo.x, coords_geo.y + (1.0 - niri_clamped_progress));
+                if (0.0 <= shifted.y && shifted.y <= 1.0) {
+                    color = texture2D(niri_tex, shifted) * opacity;
+                }
+            }
+            return color;
+        }
+    "
+}
+
+window-close {
+    duration-ms 300
+    curve "ease-out-cubic"
+    custom-shader r"
+        vec4 close_color(vec3 coords_geo, vec3 size_geo) {
+            vec4 color = vec4(0.0);
+            if (0.0 <= coords_geo.x && coords_geo.x <= 1.0 && 0.0 <= coords_geo.y && coords_geo.y <= 1.0) {
+                float slide = (1.0 - niri_clamped_progress) - coords_geo.y;
+                float opacity = clamp(slide, 0.0, 1.0);
+                vec2 shifted = vec2(coords_geo.x, coords_geo.y + niri_clamped_progress);
+                if (0.0 <= shifted.y && shifted.y <= 1.0) {
+                    color = texture2D(niri_tex, shifted) * opacity;
+                }
+            }
+            return color;
+        }
+    "
+}
