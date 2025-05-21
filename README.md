@@ -1,7 +1,5 @@
 # Niri on Void Linux
 
-![screenshot](screenshot.png)
-
 Welcome to my custom Niri setup on Void Linux! Niri is a
 scrollable-tiling Wayland compositor that arranges windows in columns on
 an infinite horizontal strip, inspired by PaperWM. This repository
@@ -9,6 +7,8 @@ contains my configuration for Niri, featuring custom window animations,
 Waybar for a status bar, and Kitty as the terminal emulator. Below,
 you'll find details on the setup, installation instructions, and how to
 use the custom animations.
+
+![screenshot](screenshot.png)
 
 ## Features
 
