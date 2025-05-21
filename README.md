@@ -31,7 +31,7 @@ use the custom animations.
   xbps-install for package management.
 
 - **Overview**: See all windows and workspaces at a glance, drag and move them around
-![screenshot](screenshot2)
+![screenshot](screenshot2.png)
 
 ## Screenshot
 
