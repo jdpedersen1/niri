@@ -1,5 +1,7 @@
 # Niri on Void Linux
 
+![screenshot](screenshot.png)
+
 Welcome to my custom Niri setup on Void Linux! Niri is a
 scrollable-tiling Wayland compositor that arranges windows in columns on
 an infinite horizontal strip, inspired by PaperWM. This repository
@@ -58,7 +60,7 @@ you use a different filename or location.
 
 1.  **Install Niri and Dependencies**:
     ```bash
-    *sudo xbps-install -S niri waybar kitty grim fuzzel*
+    sudo xbps-install -S niri waybar kitty grim fuzzel*
     ```
     Niri is available in Void Linux's repositories. If not found, you
     may need to build Niri from source; see the Niri GitHub for
