@@ -30,6 +30,9 @@ use the custom animations.
 - **Void Linux Compatibility**: Tailored for Void Linux, using
   xbps-install for package management.
 
+- **Overview**: See all windows and workspaces at a glance, drag and move them around
+![screenshot](screenshot2)
+
 ## Screenshot
 
 *Caption*: My Niri desktop on Void Linux, showcasing the Waybar at the
@@ -95,16 +98,20 @@ components:
 ### Custom Animations
 
 The animations directory includes the following custom animations:
-- fall
+- fall - window drops in from above and then falls out through the bottom of the screen
 - circleFadeIn
-- diagonalWipe
+- diagonalWipe 
 - gentleZoom
 - rippleFade
 - spin-out-close
 - topSlide
 - vortex
 
-### Other Settings
+I am working on a script to automatically change animations for you with the press of a keybinding, but for now
+just remove the animations that are in the config.kdl and copy and paste the animations that are in the desired 
+animation file into the config.kdl.
+
+### Other Features
 - **Environment**: Set environment variables
   ```kdl
   *environment {*
