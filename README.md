@@ -95,15 +95,14 @@ components:
 ### Custom Animations
 
 The animations directory includes the following custom animations:
-    - fall
-    - circleFadeIn
-    - diagonalWipe
-    - gentleZoom
-    - rippleFade
-    - spin-out-close
-    - topSlide
-    - vortex
-
+- fall
+- circleFadeIn
+- diagonalWipe
+- gentleZoom
+- rippleFade
+- spin-out-close
+- topSlide
+- vortex
 
 ### Other Settings
 - **Environment**:
